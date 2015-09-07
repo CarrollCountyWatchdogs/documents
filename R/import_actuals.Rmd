@@ -43,7 +43,6 @@ for (f in (1:length(fund.lines))){
   hline=all1[lnum,]
  sf=unlist(strsplit(hline,"\n"))
   all$fund[lnum:nssrows]=sf[2]
-)
 }
 print(all)
 ```
