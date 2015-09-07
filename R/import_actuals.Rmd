@@ -1,0 +1,51 @@
+---
+title: "Carroll County 2010 Expenditures"
+author: "Kate Davis"
+date: "9/7/2015"
+output: html_document
+---
+
+```{r read-wb}
+require(xlsx)
+require(data.table)
+fn="~/scc_documents/2010_Expediture_Budget.xlsx"
+wb=loadWorkbook(fn)
+sh=getSheets(wb)
+sheetnames=names(sh)
+cclass=c('character',rep('numeric',16))
+sheetnum=1
+sheet=sh[[sheetnum]]
+all = read.xlsx( fn, sheetIndex=sheetnum, header=FALSE)
+nssrows=sh[[sheetnum]]$getLastRowNum()+1
+nsscols=8 #ncol(all)
+all1=readColumns(sh[[sheetnum]],1,1,1,nssrows,header=FALSE,stringsAsFactors=F)
+
+# Header
+fund.lines= which(all$X1 %like% 'ACS')
+tot.lines= which(all$X1 %like% 'TOTAL:')
+head.lines    = c(0,tot.lines)+1
+all=readColumns(sh[[sheetnum]],1,nsscols,1,nssrows,header=FALSE,colClasses=c('numeric','character',rep('numeric',nsscols-3),'character'))
+names(all)=c("subcode","subcode_name","adopted","ecumbered","mtd","ytd","balance","percent_budget")
+```
+
+```{r add-funds}
+all$fund=""
+all$subfund=""
+for (f in (1:length(head.lines))){
+  lnum=head.lines[f]
+  hline=all1[lnum,]
+#  sf=unlist(strsplit(hline,"\n"))
+#  all$fund[lnum:nssrows]="1000 General"
+  all$subfund[lnum:nssrows]=paste(all$subcode[lnum],all$subcode_name[lnum])
+}
+for (f in (1:length(fund.lines))){
+  lnum=fund.lines[f]
+  hline=all1[lnum,]
+ sf=unlist(strsplit(hline,"\n"))
+  all$fund[lnum:nssrows]=sf[2]
+)
+}
+print(all)
+```
+
+
